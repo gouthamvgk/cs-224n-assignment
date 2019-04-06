@@ -261,7 +261,7 @@ class NMT(nn.Module):
         for i in range(Y.size(0)):
             Y_t = Y.split(1)[i]
             Y_t = Y_t.squeeze(0)
-            Ybar_t = torch.cat((o_prev, Y_t),dim=1)
+            Ybar_t = torch.cat((Y_t, o_prev),dim=1)
             dec_state, combined_output, _ = self.step(Ybar_t, dec_state, enc_hiddens, enc_hiddens_proj, enc_masks)
             combined_outputs.append(combined_output)
             o_prev = combined_output
@@ -363,7 +363,7 @@ class NMT(nn.Module):
         alpha_t = nn.functional.softmax(e_t, dim=1)
         a_t = torch.bmm(alpha_t.unsqueeze(1), enc_hiddens)
         a_t = a_t.squeeze(1)
-        U_t = torch.cat((dec_hidden, a_t), dim = 1)
+        U_t = torch.cat((a_t, dec_hidden), dim = 1)
         V_t = self.combined_output_projection(U_t)
         O_t = torch.tanh(V_t)
         O_t = self.dropout(O_t)
